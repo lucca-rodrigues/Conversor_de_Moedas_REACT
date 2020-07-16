@@ -15,6 +15,7 @@ function App() {
   const [validationForm, setValidationForm] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [resultConvertion, setResultConvertion] = useState('');
+  const [error, setError] = useState(false);
 
   function handleValue(e){
     setValor(e.target.value.replace(/\D/g, ''));
@@ -30,7 +31,7 @@ function App() {
     setMoedaPara(e.target.value);
   }
 
-  function CloseModal(e){
+  function handleCloseModal(e){
     setValor('');
     setMoedaDe('BRL');
     setMoedaPara('USD');
@@ -48,11 +49,21 @@ function App() {
       axios.get(FIXER_URL)
         .then(response => {
           const Coute = ResultConvertionValue(response.data)
-          setResultConvertion(`${valor} ${moedaDe} = ${Coute} ${moedaPara}`);
-          setShowModal(true);
-          setLoading(false);
-        })
+          if(Coute){
+            setResultConvertion(`${valor} ${moedaDe} = ${Coute} ${moedaPara}`);
+            setShowModal(true);
+            setLoading(false);
+          }else{
+            handleShowError();
+          }
+        }).catch(err => handleShowError());
     }
+
+    function handleShowError(){
+      setError(true);
+      setLoading(false);
+    }
+
     function ResultConvertionValue(result){
       if(!result || result.success !== true){
         return false;
@@ -70,7 +81,7 @@ function App() {
       <h1>
         Conversor de Moedas
       </h1>
-      <Alert variant="danger" show={false}>
+      <Alert variant="danger" show={error}>
         Erro ao obter os dados da conversão.
       </Alert>
       <Jumbotron>
@@ -110,7 +121,7 @@ function App() {
             </Col>
           </Form.Row>
         </Form>
-        <Modal show={showModal} onHide={CloseModal}>
+        <Modal show={showModal} onHide={handleCloseModal}>
           <Modal.Header closeButton>
             <Modal.Title>
               Conversão
@@ -120,7 +131,7 @@ function App() {
             {resultConvertion}
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="success" onClick={CloseModal}>
+            <Button variant="success" onClick={handleCloseModal}>
               Nova conversão
             </Button>
           </Modal.Footer>
