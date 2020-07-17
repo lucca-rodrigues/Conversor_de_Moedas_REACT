@@ -8,7 +8,7 @@ import axios from 'axios';
 function App() {
   const FIXER_URL = 'http://data.fixer.io/api/latest?access_key=eba7130a5b2d720ce43eb5fcddd47cc3';
 
-  const [valor, setValor] = useState('');
+  const [valor, setValor] = useState('1');
   const [moedaDe, setMoedaDe] = useState('BRL');
   const [moedaPara, setMoedaPara] = useState('USD');
   const [loading, setLoading] = useState(false);
@@ -32,7 +32,7 @@ function App() {
   }
 
   function handleCloseModal(e){
-    setValor('');
+    setValor('1');
     setMoedaDe('BRL');
     setMoedaPara('USD');
     setValidationForm(false);
@@ -115,13 +115,13 @@ function App() {
               </Form.Control>
             </Col>
             <Col sm="2">
-              <Button variant="success" onClick={handleSubmit}>
+              <Button variant="success" type="submit" data-testid="converter">
                 {loading && loading === true ?(<Spinner animation="border" size="sm"/>):(<span>Converter</span>)}
               </Button>
             </Col>
           </Form.Row>
         </Form>
-        <Modal show={showModal} onHide={handleCloseModal}>
+        <Modal show={showModal} onHide={handleCloseModal} data-testid="modal">
           <Modal.Header closeButton>
             <Modal.Title>
               Conversão
